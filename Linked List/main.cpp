@@ -15,7 +15,7 @@ int main()
 
 	//print list
 	cout << "List: ";
-	list.print(std::cout);
+	list.print();
 	cout << endl;
 	cout << endl;
 
@@ -24,6 +24,6 @@ int main()
 
 	//print list
 	cout << "New List: ";
-	list.print(std::cout);
+	list.print();
 	cout << endl;
 }

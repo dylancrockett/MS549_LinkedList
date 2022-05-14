@@ -195,7 +195,7 @@ namespace linked_list {
 		/// Output the contents list to a specified stream.
 		/// </summary>
 		/// <typeparam name="T">Stream to send list contents to.</typeparam>
-		void print(std::ostream& stream) {
+		void print(std::ostream& stream = std::cout) {
 			//check if the list is empty
 			if (this->head == nullptr) {
 				stream << "[]";
