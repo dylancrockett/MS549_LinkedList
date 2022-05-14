@@ -131,6 +131,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LinkedList.hpp" />
+    <ClInclude Include="LinkedListTest.hpp" />
     <ClInclude Include="UnitTesting.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

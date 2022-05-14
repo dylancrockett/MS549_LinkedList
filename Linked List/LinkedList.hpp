@@ -154,20 +154,29 @@ namespace linked_list {
 		}
 
 		/// <summary>
+		/// Remove the last item in the list.
+		/// </summary>
+		void remove() {
+			//if the list has no items
+			if (this->tail == nullptr) return;
+
+			//remove the last node from the list (tail)
+			this->remove(this->tail);
+		}
+
+		/// <summary>
 		/// Remove the node closest to the head of the list with a matching value.
 		/// </summary>
 		/// <param name="value">The value to be removed from the list.</param>
-		/// <returns>If a node was found (and presumably removed).</returns>
-		bool remove(T value) {
+		void remove(T value) {
 			//find a node with the value provided
 			Node* node = this->find(value);
 
 			//if no node was found
-			if (node == nullptr) return false;
+			if (node == nullptr) return;
 
 			//remove the node from the list
 			this->remove(node);
-			return true;
 		}
 
 		/// <summary>

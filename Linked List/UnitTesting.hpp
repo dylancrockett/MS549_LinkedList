@@ -1,10 +1,11 @@
-#ifndef MS449_TESTING
-#define MS449_TESTING
+#ifndef MS549_TESTING
+#define MS549_TESTING
 
 #include <iostream>
 #include <string>
 #include <vector>
 #include <functional>
+#include <chrono>
 
 namespace unit_testing {
 	using namespace std;
@@ -30,13 +31,19 @@ namespace unit_testing {
 			bool passed;
 
 			/// <summary>
+			/// How long the test took to run in microseconds.
+			/// </summary>
+			chrono::microseconds durration;
+
+			/// <summary>
 			/// Create an instance of TestResult
 			/// </summary>
 			/// <param name="name">Name of the test generating the result.</param>
 			/// <param name="passed">If the test passed.</param>
-			TestResult(string name, bool passed) {
+			TestResult(string name, bool passed, chrono::microseconds durration = chrono::microseconds(0)) {
 				this->name = name;
 				this->passed = passed;
+				this->durration = durration;
 			}
 		};
 
@@ -54,7 +61,14 @@ namespace unit_testing {
 		/// <summary>
 		/// The stream to which logs are sent.
 		/// </summary>
-		ostream & log_stream;
+		ostream & log_stream = cout;
+
+		/// <summary>
+		/// Log the result of a test.
+		/// </summary>
+		void log_test(string testName, bool testPassed, chrono::microseconds testDurration = chrono::microseconds(0)) {
+			results.push_back(TestResult(testName, testPassed, testDurration));
+		}
 
 	public:
 		/// <summary>
@@ -63,7 +77,6 @@ namespace unit_testing {
 		/// <param name="name">Name of the UnitTest instance.</param>
 		UnitTest(string name = "Unit Test", ostream& log_stream = cout) {
 			this->name = name;
-			this->log_stream = log_stream;
 		}
 
 		/// <summary>
@@ -76,13 +89,6 @@ namespace unit_testing {
 		}
 
 		/// <summary>
-		/// Log the result of a test.
-		/// </summary>
-		void log_result(string testName, bool testPassed) {
-			results.push_back(TestResult(name, testPassed));
-		}
-
-		/// <summary>
 		/// Assert that the first value provided is the same as the second expected value.
 		/// </summary>
 		/// <typeparam name="T">Type of the value being compared.</typeparam>
@@ -90,7 +96,7 @@ namespace unit_testing {
 		/// <param name="value">Value being compared to the expected value.</param>
 		/// <param name="expected">What the value provided is expected to be.</param>
 		template <typename T> void assert(string name, T value, T expected) {
-			this->log_result(name, value == expected);
+			this->log_test(name, value == expected);
 		}
 
 		/// <summary>
@@ -98,18 +104,23 @@ namespace unit_testing {
 		/// </summary>
 		/// <typeparam name="T">Type of the value being compared.</typeparam>
 		/// <param name="name">Name of the test being performed.</param>
-		/// <param name="func">Function which returns a value.</param>
+		/// <param name="test">Function which returns a value.</param>
 		/// <param name="expected">What the value returned by the function is expected to be.</param>
-		template <typename T> void ASSERT(string name, function<T()> func, T expected) {
+		template <typename T> void assert(string name, function<T()> test, T expected) {
 			try {
-				//run the function and get the result
-				T result = func();
+				//run the function and get the result & measure how long it takes
+				auto start = chrono::high_resolution_clock::now();
+				T result = test();
+				auto end = chrono::high_resolution_clock::now();
+
+				//get execution durration
+				auto durration = chrono::duration_cast<chrono::microseconds>(end - start);
 				
 				//log the result
-				this->log_result(name, result == expected);
+				this->log_test(name, result == expected, durration);
 			}
 			catch (const std::exception& e) {
-				this->LOG("Unhandled Exception: " + *e.what(), name);
+				this->log("Unhandled Exception: " + *e.what(), name);
 				results.push_back(TestResult("[EXCEPTION]" + name, false));
 			}
 		}
@@ -118,7 +129,7 @@ namespace unit_testing {
 		/// Checks all performed tests to see if any failed, if all passed true is returned, otherwise false.
 		/// </summary>
 		/// <returns>If all tests passed.</returns>
-		bool TEST_PASSED() {
+		bool passed() {
 			for (auto result : this->results) {
 				if (!result.passed) return false;
 			}
@@ -129,30 +140,41 @@ namespace unit_testing {
 		/// <summary>
 		/// Log the results of the unit test to the specified stream.
 		/// </summary>
-		void LOG_RESULTS(ostream& stream = cout) {
+		void log_results(ostream& stream = cout) {
 			stream << "+-" << string(this->name.length(), '-') << "---------+" << endl;
 			stream << "| " << this->name						 << " Results |" << endl;
 			stream << "+-" << string(this->name.length(), '-') << "---------+" << endl;
-			stream << endl;
+			stream << "|" << endl;
 				
+			//log the result of each test
 			for (int i = 0; i < this->results.size(); i++) {
 				auto result = this->results[i];
-				stream << "[#" << (i + 1) << ")[" << (result.passed ? "PASSED" : "FAILED") << "]: " << result.name << endl << endl;
+
+				//log test result (pass/fail)
+				stream << "| (#" << (i + 1) << ")[" << (result.passed ? "PASSED" : "FAILED") << "]: " << result.name << endl;
+				
+				//log test durration if not 0
+				if (result.durration != chrono::microseconds(0)) stream << "|   <> Test took " << result.durration.count() << "ms <>" << endl;
+				
+				stream << "|" << endl;
 			}
 
-			//get number of tests
+			//get number of tests, passed tests, and durration of all tests combined
 			int totalTests = this->results.size();
 			int totalPassedTests = 0;
+			chrono::microseconds totalDurration = chrono::microseconds(0);
 
 			for (auto result : this->results) {
 				if (result.passed) totalPassedTests += 1;
+				totalDurration += result.durration;
 			}
 
-			stream << "|\\" << endl;
+			stream << "+\\" << endl;
 			stream << "|| <> RESULT <>" << endl;
-			stream << "|| - " << (this->TEST_PASSED() ? "TEST PASSED" : "TEST FAILED") << endl;
+			stream << "|| - " << (this->passed() ? "TEST PASSED" : "TEST FAILED") << endl;
 			stream << "|| - " << totalPassedTests << "/" << totalTests << " Tests Passed" << endl;
-			stream << "|/" << endl;
+			stream << "|| - " << "Tests took " << totalDurration.count() << "ms in total" << endl;
+			stream << "+/" << endl;
 		}
 	};
 }
