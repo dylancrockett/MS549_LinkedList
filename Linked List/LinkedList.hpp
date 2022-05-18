@@ -68,7 +68,57 @@ namespace linked_list {
 			operator T() const { return this->value;  }
 		};
 
+		/// <summary>
+		/// Iterator class which can be used for iteration over the LinkedList
+		/// </summary>
+		class NodeIterator {
+		public:
+			/// <summary>
+			/// Current node being iterated over.
+			/// </summary>
+			Node* current;
+
+			/// <summary>
+			/// Constructor
+			/// </summary>
+			/// <param name="node">The node the iterator points to.</param>
+			NodeIterator(Node* node) {
+				this->current = node;
+			}
+
+			/// <summary>
+			/// Return the next iterator in the list.
+			/// </summary>
+			/// <returns>The next iterator.</returns>
+			NodeIterator operator++() {
+				this->current = this->current->next;
+				return *this;
+			}
+
+			/// <summary>
+			/// Check if the iterator is the same as another iterator.
+			/// </summary>
+			/// <param name="other">The node to be checked against</param>
+			/// <returns>If the two nodes are not the same.</returns>
+			bool operator != (const NodeIterator& other) const {
+				return this->current != other.current;
+			}
+
+			/// <summary>
+			/// Returns the value stored within the node being stored in the iterator.
+			/// </summary>
+			/// <returns></returns>
+			const T& operator*() const {
+				return this->current->value;
+			}
+		};
+
 	private:
+		/// <summary>
+		/// Iterator returned when the list is empty.
+		/// </summary>
+		NodeIterator empty_iter = NodeIterator(new Node(0));
+
 		/// <summary>
 		/// The head (front) node of the linked list.
 		/// </summary>
@@ -201,6 +251,39 @@ namespace linked_list {
 		}
 
 		/// <summary>
+		/// Get begining iterator.
+		/// </summary>
+		/// <returns></returns>
+		NodeIterator begin() {
+			//if list is empty
+			if (this->head == nullptr) return this->empty_iter;
+
+			//return node iterator pointing to head
+			return NodeIterator(this->head);
+		}
+
+		/// <summary>
+		/// Get ending iterator.
+		/// </summary>
+		/// <returns></returns>
+		NodeIterator end() {
+			//if list is empty
+			if (this->head == nullptr) return this->empty_iter;
+
+			//reutrn node iterator with nullptr
+			return NodeIterator(nullptr);
+		}
+
+		/// <summary>
+		/// Returns true if the list is empty, false if it contains any items.
+		/// </summary>
+		/// <returns>If the list is empty.</returns>
+		bool empty() {
+			//empty if the head node is null
+			return this->head == nullptr;
+		}
+
+		/// <summary>
 		/// Output the contents list to a specified stream.
 		/// </summary>
 		/// <typeparam name="T">Stream to send list contents to.</typeparam>
@@ -214,22 +297,13 @@ namespace linked_list {
 			//open list
 			stream << "[";
 
-			//keep track of the current node, starts at the head node
-			Node* current = this->head;
-
-			//iterate over list until tail is reached
-			while (current != nullptr) {
-				//send value
-				stream << current->value;
-
-				//send comma if this is not the last node
-				if (current->next != nullptr) stream << ", ";
-
-				//set current to the next node
-				current = current->next;
+			for (auto item : *this) {
+				//output value
+				stream << item << ", ";
 			}
 
-			stream << "]";
+			//remove trailing comma and add closing bracket
+			stream << "\b\b]";
 		}
 	};
 }
