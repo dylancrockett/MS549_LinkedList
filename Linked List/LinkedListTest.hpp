@@ -93,7 +93,7 @@ namespace linked_list_testing {
 			}
 
 			return true;
-			}, true);
+		}, true);
 
 		test.assert<bool>("Delete 100 items.", [&list]() {
 			for (int i = 0; i < 100; i++) {
@@ -101,7 +101,7 @@ namespace linked_list_testing {
 			}
 
 			return true;
-			}, true);
+		}, true);
 
 		test.assert<bool>("Add 1,000 items.", [&list]() {
 			for (int i = 0; i < 1000; i++) {
@@ -109,7 +109,7 @@ namespace linked_list_testing {
 			}
 
 			return true;
-			}, true);
+		}, true);
 
 		test.assert<bool>("Delete 1,000 items.", [&list]() {
 			for (int i = 0; i < 1000; i++) {
@@ -117,7 +117,7 @@ namespace linked_list_testing {
 			}
 
 			return true;
-			}, true);
+		}, true);
 
 		test.assert<bool>("Add 10,000 items.", [&list]() {
 			for (int i = 0; i < 10000; i++) {
@@ -125,7 +125,7 @@ namespace linked_list_testing {
 			}
 
 			return true;
-			}, true);
+		}, true);
 
 		test.assert<bool>("Delete 1,0000 items.", [&list]() {
 			for (int i = 0; i < 10000; i++) {
@@ -133,7 +133,7 @@ namespace linked_list_testing {
 			}
 
 			return true;
-			}, true);
+		}, true);
 
 		//log the results
 		test.log_results();
@@ -155,7 +155,7 @@ namespace linked_list_testing {
 			}
 
 			return true;
-			}, true);
+		}, true);
 
 		test.assert<bool>("Delete 100 items.", [&list]() {
 			for (int i = 0; i < 100; i++) {
@@ -163,7 +163,7 @@ namespace linked_list_testing {
 			}
 
 			return true;
-			}, true);
+		}, true);
 
 		test.assert<bool>("Add 1,000 items.", [&list]() {
 			for (int i = 0; i < 1000; i++) {
@@ -171,7 +171,7 @@ namespace linked_list_testing {
 			}
 
 			return true;
-			}, true);
+		}, true);
 
 		test.assert<bool>("Delete 1,000 items.", [&list]() {
 			for (int i = 0; i < 1000; i++) {
@@ -179,7 +179,7 @@ namespace linked_list_testing {
 			}
 
 			return true;
-			}, true);
+		}, true);
 
 		test.assert<bool>("Add 10,000 items.", [&list]() {
 			for (int i = 0; i < 10000; i++) {
@@ -187,7 +187,7 @@ namespace linked_list_testing {
 			}
 
 			return true;
-			}, true);
+		}, true);
 
 		test.assert<bool>("Delete 1,0000 items.", [&list]() {
 			for (int i = 0; i < 10000; i++) {
@@ -195,7 +195,7 @@ namespace linked_list_testing {
 			}
 
 			return true;
-			}, true);
+		}, true);
 
 		//log the results
 		test.log_results();

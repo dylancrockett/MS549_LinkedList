@@ -72,7 +72,7 @@ namespace linked_list {
 		/// <summary>
 		/// The head (front) node of the linked list.
 		/// </summary>
-		LinkedList<T>::Node* head;
+		Node* head;
 
 		/// <summary>
 		/// The tail (back) node of the linked list.
